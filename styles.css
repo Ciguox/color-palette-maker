@@ -8,23 +8,25 @@
 
 }
 .sample{
-    display: grid;
-    place-content: center;
+    text-align: center;
     width: 20vw;
     height: 100vh;
+    font-family:'Courier New', Courier, monospace;
+    font-weight: 900;
+    font-size: 2rem;
 }
-
+.hue-sample{
+    
+    width: 100%;
+    min-height: 1em;
+    outline: 1px solid black;
+    
+}
 .generateAll{
    position: absolute;
    right: 45%;
    left: 45%;
    bottom: 5%;
-}
-
-.color-code{
-    font-family:'Courier New', Courier, monospace;
-    font-weight: 900;
-    font-size: 2rem;
 }
 
 .generateAll{
