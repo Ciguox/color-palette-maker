@@ -1,12 +1,18 @@
 /*Generates a random HEX color*/
+function formatColor(color){
+    while (color.length < 6) {
+        color = "0" + color;
+    }
+    return color
+}
 export function generateRandomColor() {
     let randomColor = Math.floor(Math.random() * 16777215).toString(16).toUpperCase();
-    while (randomColor.length < 6) {
-        randomColor = randomColor + "0";
-    }
+
+    randomColor = formatColor(randomColor);
     return randomColor;
 }
 
+/*generateColorScale(colorCode, size = 5): Generates a list of HEX colors from white to black based on a given color and size of list*/
 export function generateColorScale(colorCode, size = 5) {
     /*Variables*/
     let scale = [];

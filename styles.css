@@ -24,6 +24,10 @@
     width: 100%;
     min-height: 1em;
 }
+.selected{
+    z-index: 2;
+    border: .2em solid gold;
+}
 .generateAll{
    position: absolute;
    right: 45%;
