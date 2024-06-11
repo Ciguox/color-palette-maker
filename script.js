@@ -5,10 +5,8 @@ import { generateRandomColor, generateColorScale } from "./controller/colorGener
 /*-----------------------------------------------------------------------------------------------------------------------------------------*/
 
 const root = document.getElementById("root");
-const samples = document.getElementsByClassName("sample");
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------*/
-
 function chooseTextColor(color) {
     for (let i = 0; i < color.length; i++) {
         if (i % 2 == 0 && color[i] < '5') {
@@ -17,26 +15,51 @@ function chooseTextColor(color) {
     }
     return '000000';
 }
+/*updateDample: Updates the bg-color and text in a div passed*/
 function updateSample(sample, color){
     sample.style = `background-color:#${color}; color: #${chooseTextColor(color)};`;
     sample.textContent = color;
 }
-function addSamples(numberOfsamples = 5) {
+function addMouseEventToColorSamples(sample){
+    sample.addEventListener("mouseenter", () => {
+        const colorScale = generateColorScale(sample.textContent, 10);
+        sample.addEventListener("wheel", (event) => {
+            sample.textContent = "";
+            scrollThroughScale(event, colorScale);
+            sample.append(generateColorScaleElements(colorScale));
+        }, { passive: true });
+        sample.addEventListener("mouseleave", () => {
+            if (sample.childNodes.length > 1) {
+                sample.innerHTML = sample.childNodes[Math.floor(sample.childNodes.length / 2)].textContent;
+                updateSample(sample, colorScale[Math.round(colorScale.length/2)])
+            }
+        })
+    }, { once: true });
+}
+function generateSampleElements(numberOfsamples = 5) {
     let colors = [];
+    root.innerHTML = "";
     /*First we add random colors to the pallette*/
     for (let i = 0; i < numberOfsamples; i++) {
         colors.push(generateRandomColor());
     }
-    /*We order them from low to hight or reverse at random*/
+    /*We order them from low to hight or reverse at random to improve presentability*/
     (Math.random < 0.5) ? colors.sort() : colors.sort().reverse();
     /*The resulting pallete is shown in the web*/
     for (let i = 0; i < numberOfsamples; i++) {
-        const sample = document.getElementById(`color-${i + 1}`);
+        /*We create the "sample" div element*/
+        const sample = document.createElement("div");
+        sample.id = `color-${i}`;
+        sample.classList.add("sample")
+        sample.title = "scroll with the mouse wheel to change brightness";
         updateSample(sample, colors[i]);
+        addMouseEventToColorSamples(sample);
+        root.appendChild(sample);
     }
 }
-/*generateColorSacaleElements(scale): returs a NodeList of div elements based on a given HEX Color list*/
-function generateColorSacaleElements(scale) {
+
+/*generateColorScaleElements(scale): returs a NodeList of div elements based on a given HEX Color list*/
+function generateColorScaleElements(scale) {
     let hueSamples = document.createDocumentFragment();
     for (let i = 0; i < scale.length; i++) {
         const sample = document.createElement("div");
@@ -58,32 +81,14 @@ function scrollThroughScale(event, scale){
 /*-----------------------------------------------------------------------------------------------------------------------------------------*/
 /*onload executions and EventListeners*/
 
-root.onload = addSamples();
+root.onload = generateSampleElements();
 
-document.getElementById("addSamplesButton").addEventListener("click", () => {
-    addSamples();
+document.getElementById("generateSampleElementsButton").addEventListener("click", () => {
+    generateSampleElements();
 })
 /*keyboard contols*/
 document.addEventListener("keypress", (event) => {
     if (event.key == " " || event.key == "Enter") {
-        addSamples();
+        generateSampleElements();
     }
 });
-
-for (let i = 0; i < samples.length; i++) {
-    samples[i].addEventListener("mouseenter", () => {
-        const colorScale = generateColorScale(samples[i].textContent, 10);
-        
-        samples[i].addEventListener("wheel", (event) => {
-            samples[i].textContent = "";
-            scrollThroughScale(event, colorScale);
-            samples[i].append(generateColorSacaleElements(colorScale));
-        }, { passive: true });
-        samples[i].addEventListener("mouseleave", () => {
-            if (samples[i].childNodes.length > 1) {
-                samples[i].innerHTML = samples[i].childNodes[Math.floor(samples[i].childNodes.length / 2)].textContent;
-            }
-            updateSample(samples[i], colorScale[Math.round(colorScale.length/2)])
-        })
-    }, { once: true });
-}
