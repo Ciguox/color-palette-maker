@@ -1,3 +1,4 @@
+import {toRgb, toHex} from "./colorFormater.js"
 /*Generates a random HEX color*/
 function formatColor(color){
     while (color.length < 6) {
