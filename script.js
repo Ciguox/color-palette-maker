@@ -23,26 +23,24 @@ function updateSample(sample, color){
 }
 
 function addMouseEventToSample(sample){
-    for (let i = 0; i < samples.length; i++) {
-        samples[i].addEventListener("mouseenter", () => {
-            const colorScale = generateColorScale(samples[i].textContent, 10);
-            
-            samples[i].addEventListener("wheel", (event) => {
-                samples[i].textContent = "";
-                scrollThroughScale(event, colorScale);
-                samples[i].append(generateColorSacaleElements(colorScale));
-            }, { passive: true });
-            samples[i].addEventListener("mouseleave", () => {
-                if (samples[i].childNodes.length > 1) {
-                    samples[i].innerHTML = samples[i].childNodes[Math.floor(samples[i].childNodes.length / 2)].textContent;
-                }
-                updateSample(samples[i], colorScale[Math.round(colorScale.length/2)])
-            })
-        }, { once: true });
-    }
+    sample.addEventListener("mouseenter", () => {
+        const colorScale = generateColorScale(sample.textContent, 10);
+        
+        sample.addEventListener("wheel", (event) => {
+            sample.textContent = "";
+            scrollThroughScale(event, colorScale);
+            sample.append(generateColorScaleElements(colorScale));
+        }, { passive: true });
+        sample.addEventListener("mouseleave", () => {
+            if (sample.childNodes.length > 1) {
+                sample.innerHTML = sample.childNodes[Math.floor(sample.childNodes.length / 2)].textContent;
+            }
+            updateSample(sample, colorScale[Math.round(colorScale.length/2)])
+        })
+    }, { once: true });
 }
 
-function addSamples(numberOfsamples = 5) {
+function generateSampleElements(numberOfsamples = 5) {
     let colors = [];
     root.innerHTML = "";
     /*First we add random colors to the pallette*/
@@ -60,6 +58,7 @@ function addSamples(numberOfsamples = 5) {
         sample.title = "scroll with the mouse wheel to change brightness";
         updateSample(sample, colors[i]);
         addMouseEventToSample(sample);
+        root.appendChild(sample);
     }
 }
 
@@ -94,6 +93,6 @@ document.getElementById("generateSampleElementsButton").addEventListener("click"
 /*keyboard contols*/
 document.addEventListener("keypress", (event) => {
     if (event.key == " " || event.key == "Enter") {
-        addSamples();
+        generateSampleElements();
     }
 });
